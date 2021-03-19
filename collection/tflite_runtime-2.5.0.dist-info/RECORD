@@ -1,0 +1,7 @@
+tflite_runtime/__init__.py,sha256=PBG9Ih20EbMtdO539lUTdVWOzewaECh7YtzRHj4lM44,68
+tflite_runtime/_pywrap_tensorflow_interpreter_wrapper.cpython-38-x86_64-linux-gnu.so,sha256=AcQAaNjf9tcKX58uyHuyHcKkrj8AWVmDdbe3kPEAE20,9070632
+tflite_runtime/interpreter.py,sha256=mB6RMHyPpN15SYjMxcsb5xJ1entsNnntN3w9TkIYJxc,30637
+tflite_runtime-2.5.0.dist-info/METADATA,sha256=L02qvtVv61LY6skLcQ1MOr5edCUMMMsUpkifmRWP1Yc,1488
+tflite_runtime-2.5.0.dist-info/WHEEL,sha256=bqWvKe8aE3n3cMfNsMvb75H133x9XaN2rt-BtXZirjg,103
+tflite_runtime-2.5.0.dist-info/top_level.txt,sha256=uNbSt_JkE5qb43UeqR4Wx6_Y6A5613g6gtS49welF08,15
+tflite_runtime-2.5.0.dist-info/RECORD,,

@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  image-collection
+
+  Sample SAM Template for image-collection
+
+Globals:
+  Function:
+    Timeout: 900
+    MemorySize: 526
+
+Resources:
+  foodvybeRestaurantImageBucket:
+    Type: AWS::S3::Bucket
+  CollectionFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      FunctionName: CollectionFunction
+      CodeUri: collection/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          bucketname: !Ref foodvybeRestaurantImageBucket
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref foodvybeRestaurantImageBucket
+
+      EventInvokeConfig:
+        MaximumEventAgeInSeconds: 900
+        MaximumRetryAttempts: 0
+      Events:
+        collection:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: CollectionApi
+            Path: /collection
+            Method: post
+
+  CollectionApi:
+    Type: "AWS::Serverless::Api"
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        swagger: "2.0"
+        info:
+          title: collection api
+          version: "1.0.0"
+
+        paths:
+          /collection:
+            post:
+              responses:
+                "200":
+                  description: 200 response
+
+              x-amazon-apigateway-integration:
+                type: AWS
+                responses:
+                  default:
+                    statusCode: 200
+                requestParameters:
+                  integration.request.header.X-Amz-Invocation-Type: "'Event'"
+
+                uri:
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CollectionFunction.Arn}/invocations"
+
+                passthroughBehavior: when_no_match
+                httpMethod: post
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  CollectionApi:
+    Description: "API Gateway endpoint URL for Prod stage for Collectionfunction"
+    Value: !Sub "https://${CollectionApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/collection"
+  CollectionFunction:
+    Description: "CollectionFunction ARN"
+    Value: !GetAtt CollectionFunction.Arn
+  CollectionFunctionIamRole:
+    Description: "Implicit IAM Role created for CollectionFunction"
+    Value: !GetAtt CollectionFunctionRole.Arn
